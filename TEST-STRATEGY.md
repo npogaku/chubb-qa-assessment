@@ -125,6 +125,11 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 - Entered "01/01/0001" (January 1, Year 1 AD) → accepted ✅ (no error)
 - Review screen shows "January 1, 1" — broken display for year < 1000
 
+**Screenshots:**
+- `docs/screenshots/bug-009-year-1111-claim.png` — claimant view, claim with year 1111 showing as Submitted
+- `docs/screenshots/bug-009-year-0001-form.png` — Step 1 form with date 01/01/0001 entered
+- `docs/screenshots/bug-009-year-0001-review.png` — Step 3 Review showing "January 1, 1" broken display
+
 **Root cause:** Domain validation only blocks future dates: `if (incidentDate.isAfter(LocalDate.now()))`. There is no lower bound whatsoever — any past date is valid.  
 **Impact:** In a real insurance system, claims can only be submitted within the coverage period. A date from year 1 or year 1111 is semantically invalid and should be rejected with a meaningful error. The broken display ("January 1, 1") is a secondary UI issue.  
 **Test added:** `claim-submission.spec.ts → BUG-009: wizard accepts year 1111 as incident date` (documents the behaviour).  
@@ -135,6 +140,7 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 ### 🟠 BUG-012 — Claim amount field accepts leading zeros ($000000000000000.1)
 **File:** `wizard-step-1.tsx`  
 **How found:** Manual testing — entered "000000000000000.1" in the claim amount field.  
+**Screenshot:** `docs/screenshots/bug-012-leading-zeros-amount.png`  
 **Symptom:** The amount input accepted a string of 15 leading zeros followed by `.1`. The final stored amount is correct (`$0.10`) but the input displayed `$ 000000000000000.1` which looks broken and confusing to users.  
 **Root cause:** No input sanitisation or formatting on the amount field. The HTML `<input type="number">` or the custom amount input does not strip leading zeros or format the value on blur.  
 **Impact:** UX defect — the amount is mathematically valid but the display looks broken. A production system should format currency inputs properly (e.g. `$0.10` not `$000000000000000.1`).  
@@ -145,6 +151,7 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 ### 🟠 BUG-013 — Dashboard stats not refreshed after new claims are submitted
 **File:** `DashboardController.java` / `DashboardStatsCache.java`  
 **How found:** Manual testing — submitted 2 claims, then visited Admin Dashboard.  
+**Screenshot:** `docs/screenshots/bug-013-dashboard-stale-zero.png`  
 **Symptom:** Admin Dashboard showed "Total Claims: 0" even though 2 claims existed in the system. The stats were stale/cached.  
 **Root cause:** The dashboard uses Redis cache (`DashboardStatsCache`). The cache is only invalidated via the "Flush Cache & Reload" button — it is not automatically invalidated when new claims are created or status changes. The TTL-based expiry is the only automatic mechanism.  
 **Impact:** Admins see incorrect statistics until the cache expires or they manually flush it. This is a data freshness issue on a business-critical dashboard.  
@@ -163,6 +170,9 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 ### 🟠 BUG-011 — Confirmation dialog not centered on viewport (UI defect — reproducible on every status change)
 **File:** `confirmation-dialog.tsx` (admin claims page)  
 **How found:** Manual exploratory testing on the admin claims page.  
+**Screenshots:**
+- `docs/screenshots/bug-011-dialog-misaligned-rejected.png` — first status change (Submitted → Rejected)
+- `docs/screenshots/bug-011-dialog-misaligned-under-review.png` — second status change, same misalignment
 **Steps to reproduce:**
 1. Login as `admin@demo.com`
 2. Go to Claims Management
