@@ -31,6 +31,7 @@ class UpdateClaimStatusUseCaseTest {
     private ClaimRepository claimRepository;
     private UserRepository userRepository;
     private MeterRegistry meterRegistry;
+    private ApplicationEventPublisher eventPublisher;  // was missing, was causing NPE
     private UpdateClaimStatusUseCase useCase;
 
     private static final UUID CLAIM_ID = UUID.randomUUID();
@@ -42,7 +43,8 @@ class UpdateClaimStatusUseCaseTest {
         claimRepository = mock(ClaimRepository.class);
         userRepository = mock(UserRepository.class);
         meterRegistry = new SimpleMeterRegistry();
-        useCase = new UpdateClaimStatusUseCase(claimRepository, userRepository, meterRegistry);
+        eventPublisher = mock(ApplicationEventPublisher.class);
+        useCase = new UpdateClaimStatusUseCase(claimRepository, userRepository, meterRegistry, eventPublisher);
     }
 
     // TC-031: Use case orchestration logic tested with mocked repositories
