@@ -3,13 +3,13 @@ package com.example.demo.adapter.out.messaging;
 import com.example.demo.domain.claim.ClaimStatus;
 import com.example.demo.domain.claim.events.ClaimStatusChanged;
 import com.example.demo.domain.claim.events.ClaimSubmitted;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
@@ -23,19 +23,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+// original tests were mocking ObjectMapper and stubbing writeValueAsString(event) directly
+// but the publisher builds an envelope ObjectNode first via objectMapper.createObjectNode()
+// mocked mapper returns null from createObjectNode() -> NPE on envelope.put()
+// fix: use @Spy on a real mapper so createObjectNode() actually works
 @ExtendWith(MockitoExtension.class)
 class KafkaDomainEventPublisherTest {
 
     @Mock
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Mock
-    private ObjectMapper objectMapper;
+    // need real mapper — publisher does createObjectNode() internally, can't mock that away
+    @Spy
+    private ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @Mock
     private KafkaMessageSchemaValidator schemaValidator;
@@ -44,174 +46,90 @@ class KafkaDomainEventPublisherTest {
 
     @BeforeEach
     void setUp() {
-        publisher = new KafkaDomainEventPublisher(kafkaTemplate, objectMapper, schemaValidator);
-    }
-
-    // TC-077: Event published to Kafka with correct topic and message key
-    @Test
-    void should_PublishEventToKafka_When_ClaimSubmittedEventProvided() throws JsonProcessingException {
-        UUID claimId = UUID.randomUUID();
-        var event = new ClaimSubmitted(
-                UUID.randomUUID().toString(),
-                claimId,
-                UUID.randomUUID(),
-                LocalDate.now(),
-                BigDecimal.TEN,
-                Instant.now()
-        );
-        when(objectMapper.writeValueAsString(event)).thenReturn("{\"eventId\":\"test\"}");
-        doNothing().when(schemaValidator).validate(anyString(), anyString());
-        when(kafkaTemplate.send(anyString(), anyString(), anyString()))
+        publisher = new KafkaDomainEventPublisher(kafkaTemplate, mapper, schemaValidator);
+        lenient().when(kafkaTemplate.send(anyString(), anyString(), anyString()))
                 .thenReturn(CompletableFuture.completedFuture(null));
-
-        publisher.publish(event);
-
-        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), eq("{\"eventId\":\"test\"}"));
-        verify(schemaValidator).validate("{\"eventId\":\"test\"}", "ClaimSubmittedMessage");
+        lenient().doNothing().when(schemaValidator).validate(anyString(), anyString());
     }
 
-    // TC-077b: ClaimStatusChanged published with correct key
     @Test
-    void should_PublishEventToKafka_When_ClaimStatusChangedEventProvided() throws JsonProcessingException {
+    void should_PublishToClaimEventsTopic_WithClaimIdAsKey_When_ClaimSubmittedEventProvided() {
         UUID claimId = UUID.randomUUID();
-        var event = new ClaimStatusChanged(
-                UUID.randomUUID().toString(),
-                claimId,
-                ClaimStatus.SUBMITTED,
-                ClaimStatus.UNDER_REVIEW,
-                UUID.randomUUID(),
-                Instant.now()
-        );
-        when(objectMapper.writeValueAsString(event)).thenReturn("{\"type\":\"status-changed\"}");
-        doNothing().when(schemaValidator).validate(anyString(), anyString());
-        when(kafkaTemplate.send(anyString(), anyString(), anyString()))
-                .thenReturn(CompletableFuture.completedFuture(null));
-
-        publisher.publish(event);
-
-        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), eq("{\"type\":\"status-changed\"}"));
-        verify(schemaValidator).validate("{\"type\":\"status-changed\"}", "ClaimStatusChangedMessage");
+        publisher.publish(submittedEvent(claimId));
+        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), anyString());
     }
 
-    // TC-078: Event payload contains expected fields when serialized
     @Test
-    void should_SerializeEventFields_When_EventPublished() throws JsonProcessingException {
+    void should_PublishToClaimEventsTopic_WithClaimIdAsKey_When_ClaimStatusChangedEventProvided() {
         UUID claimId = UUID.randomUUID();
-        var event = new ClaimSubmitted(
-                UUID.randomUUID().toString(),
-                claimId,
-                UUID.randomUUID(),
-                LocalDate.now(),
-                BigDecimal.TEN,
-                Instant.now()
-        );
-
-        ObjectMapper realMapper = new ObjectMapper();
-        realMapper.findAndRegisterModules();
-        KafkaDomainEventPublisher realPublisher = new KafkaDomainEventPublisher(kafkaTemplate, realMapper, schemaValidator);
-        doNothing().when(schemaValidator).validate(anyString(), anyString());
-        when(kafkaTemplate.send(anyString(), anyString(), anyString()))
-                .thenReturn(CompletableFuture.completedFuture(null));
-
-        realPublisher.publish(event);
-
-        ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
-        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), payloadCaptor.capture());
-
-        String payload = payloadCaptor.getValue();
-        assertThat(payload).contains("\"eventId\"");
-        assertThat(payload).contains("\"claimId\"");
-        assertThat(payload).contains(claimId.toString());
+        publisher.publish(statusChangedEvent(claimId));
+        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), anyString());
     }
 
-    // TC-079: Failed serialization throws IllegalStateException
     @Test
-    void should_ThrowIllegalStateException_When_SerializationFails() throws JsonProcessingException {
-        var event = new ClaimSubmitted(
-                UUID.randomUUID().toString(),
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                LocalDate.now(),
-                BigDecimal.TEN,
-                Instant.now()
-        );
-        when(objectMapper.writeValueAsString(event)).thenThrow(new JsonProcessingException("test") {});
-
-        assertThatThrownBy(() -> publisher.publish(event))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Failed to serialize domain event");
-    }
-
-    // TC-NEW-001: Publisher calls validator with correct payload and schema name for ClaimSubmitted
-    @Test
-    void should_CallValidatorWithCorrectArgs_When_ClaimSubmittedEventPublished() throws JsonProcessingException {
+    void should_IncludeClaimIdInEnvelope_When_ClaimSubmittedEventPublished() {
         UUID claimId = UUID.randomUUID();
-        var event = new ClaimSubmitted(
-                UUID.randomUUID().toString(),
-                claimId,
-                UUID.randomUUID(),
-                LocalDate.now(),
-                BigDecimal.TEN,
-                Instant.now()
-        );
+        publisher.publish(submittedEvent(claimId));
 
-        ObjectMapper realMapper = new ObjectMapper();
-        realMapper.findAndRegisterModules();
-        String serialized = realMapper.writeValueAsString(event);
+        ArgumentCaptor<String> cap = ArgumentCaptor.forClass(String.class);
+        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), cap.capture());
 
-        when(objectMapper.writeValueAsString(event)).thenReturn(serialized);
-        doNothing().when(schemaValidator).validate(serialized, "ClaimSubmittedMessage");
-        when(kafkaTemplate.send(anyString(), anyString(), anyString()))
-                .thenReturn(CompletableFuture.completedFuture(null));
-
-        publisher.publish(event);
-
-        verify(schemaValidator).validate(serialized, "ClaimSubmittedMessage");
-        verify(kafkaTemplate).send(eq("claim-events"), eq(claimId.toString()), eq(serialized));
+        assertThat(cap.getValue()).contains("claim-submitted");
+        assertThat(cap.getValue()).contains(claimId.toString());
     }
 
-    // TC-NEW-002: Publisher propagates KafkaMessageValidationException when validator rejects missing required field
     @Test
-    void should_PropagateValidationException_When_ValidatorRejectsMissingRequiredField() throws JsonProcessingException {
+    void should_IncludeOldAndNewStatusInEnvelope_When_ClaimStatusChangedEventPublished() {
         UUID claimId = UUID.randomUUID();
-        var event = new ClaimSubmitted(
-                UUID.randomUUID().toString(),
-                claimId,
-                UUID.randomUUID(),
-                LocalDate.now(),
-                BigDecimal.TEN,
-                Instant.now()
-        );
-        String payloadMissingClaimId = "{\"eventId\":\"evt-1\"}";
-        when(objectMapper.writeValueAsString(event)).thenReturn(payloadMissingClaimId);
-        doThrow(new KafkaMessageValidationException("claimId: is missing but it is required"))
-                .when(schemaValidator).validate(payloadMissingClaimId, "ClaimSubmittedMessage");
+        publisher.publish(statusChangedEvent(claimId));
 
-        assertThatThrownBy(() -> publisher.publish(event))
+        ArgumentCaptor<String> cap = ArgumentCaptor.forClass(String.class);
+        verify(kafkaTemplate).send(anyString(), anyString(), cap.capture());
+
+        assertThat(cap.getValue()).contains("SUBMITTED");
+        assertThat(cap.getValue()).contains("UNDER_REVIEW");
+    }
+
+    @Test
+    void should_ValidateAgainstClaimSubmittedSchema_When_ClaimSubmittedEventPublished() {
+        publisher.publish(submittedEvent(UUID.randomUUID()));
+        verify(schemaValidator).validate(anyString(), eq("ClaimSubmittedMessage"));
+    }
+
+    @Test
+    void should_ValidateAgainstClaimStatusChangedSchema_When_StatusChangedEventPublished() {
+        publisher.publish(statusChangedEvent(UUID.randomUUID()));
+        verify(schemaValidator).validate(anyString(), eq("ClaimStatusChangedMessage"));
+    }
+
+    @Test
+    void should_PropagateValidationException_When_SchemaValidatorRejectsPayload() {
+        doThrow(new KafkaMessageValidationException("claimId: required"))
+                .when(schemaValidator).validate(anyString(), anyString());
+
+        assertThatThrownBy(() -> publisher.publish(submittedEvent(UUID.randomUUID())))
                 .isInstanceOf(KafkaMessageValidationException.class)
                 .hasMessageContaining("claimId");
     }
 
-    // TC-NEW-003: Publisher propagates KafkaMessageValidationException when validator rejects invalid enum value
     @Test
-    void should_PropagateValidationException_When_ValidatorRejectsInvalidClaimStatus() throws JsonProcessingException {
-        UUID claimId = UUID.randomUUID();
-        var event = new ClaimStatusChanged(
-                UUID.randomUUID().toString(),
-                claimId,
-                ClaimStatus.SUBMITTED,
-                ClaimStatus.UNDER_REVIEW,
-                UUID.randomUUID(),
-                Instant.now()
-        );
-        String payloadWithInvalidStatus = "{\"eventId\":\"evt-1\",\"claimId\":\"" + claimId
-                + "\",\"oldStatus\":\"INVALID_STATUS\",\"newStatus\":\"UNDER_REVIEW\",\"occurredAt\":\"2026-03-08T10:00:00Z\"}";
-        when(objectMapper.writeValueAsString(event)).thenReturn(payloadWithInvalidStatus);
-        doThrow(new KafkaMessageValidationException("oldStatus: does not have a value in the enumeration"))
-                .when(schemaValidator).validate(payloadWithInvalidStatus, "ClaimStatusChangedMessage");
+    void should_ThrowIllegalStateException_When_EnvelopeSerializationFails() throws Exception {
+        doThrow(new com.fasterxml.jackson.core.JsonProcessingException("fail") {})
+                .when(mapper).writeValueAsString(any());
 
-        assertThatThrownBy(() -> publisher.publish(event))
-                .isInstanceOf(KafkaMessageValidationException.class)
-                .hasMessageContaining("oldStatus");
+        assertThatThrownBy(() -> publisher.publish(submittedEvent(UUID.randomUUID())))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Failed to serialize domain event");
+    }
+
+    // helpers
+    private ClaimSubmitted submittedEvent(UUID claimId) {
+        return new ClaimSubmitted(UUID.randomUUID().toString(), claimId,
+                UUID.randomUUID(), LocalDate.now().minusDays(1), BigDecimal.TEN, Instant.now());
+    }
+
+    private ClaimStatusChanged statusChangedEvent(UUID claimId) {
+        return new ClaimStatusChanged(UUID.randomUUID().toString(), claimId,
+                ClaimStatus.SUBMITTED, ClaimStatus.UNDER_REVIEW, UUID.randomUUID(), Instant.now());
     }
 }
