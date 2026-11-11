@@ -160,6 +160,30 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 
 ---
 
+### 🔴 BUG-014 — Claims orphaned after Keycloak restart — claimant loses all their claims
+**File:** Keycloak configuration / `docker-compose.infra.yml`  
+**How found:** Manual testing — after restarting the stack, claimant logged in and saw "No claims yet" despite having previously submitted 2 claims.  
+**Screenshot:** `docs/screenshots/bug-014-claimant-no-claims.png`  
+**Symptom:** Admin can see 2 claims with User ID `d40a9d2c`. Claimant sees "No claims yet".  
+**Root cause:** Keycloak runs in `start-dev` mode with **in-memory H2 database** (no persistent volume). Every time the stack restarts, Keycloak re-imports the realm JSON and creates users with **new random UUIDs**. Claims in PostgreSQL are stored against the old UUIDs. After restart, the JWT contains the new UUID — `ListClaimsUseCase` finds no claims.  
+**Impact:** High — in any scenario where the stack is restarted (e.g. developer testing, demo), all previously submitted claims become permanently invisible to the claimant. The data is not lost but is inaccessible.  
+**Fix required:** Either persist Keycloak's H2 database to a volume, or use PostgreSQL for Keycloak storage, so user UUIDs are stable across restarts. The realm JSON should include the specific UUIDs for the seed users to make them deterministic.  
+**Note:** The README documents this: *"Keycloak runs in start-dev mode with an in-memory H2 database. Realm config is not persisted to a volume."* — but the impact on claim ownership is not called out.
+
+---
+
+### 🟠 BUG-015 — Admin "View Details" shows "Details view coming soon" — feature not implemented
+**File:** Admin claims table component  
+**How found:** Manual testing — clicked "View Details" on the admin claims management page.  
+**Screenshot:** `docs/screenshots/bug-015-admin-view-details-not-implemented.png`  
+**Symptom:** Clicking "View Details" on the admin claims table shows a tooltip "Details view coming soon" — no detail view opens. This is a placeholder/stub.  
+**Impact:** Admins cannot see the full claim details (description, incident location, etc.) from the admin view. They can only see the summary columns (Claim ID, User ID, Date, Amount, Status).  
+**Not fixed:** Feature is intentionally incomplete — marked as "coming soon" in the UI.
+
+---
+
+---
+
 ### 🟠 BUG-010 — Micrometer counter tag uses UUID → unbounded cardinality
 **File:** `CreateClaimUseCase.java`, `UpdateClaimStatusUseCase.java`  
 **Symptom:** `meterRegistry.counter("claims.submitted", "userId", userId.toString())` — using a UUID as a Micrometer tag value creates one time-series per user in Prometheus/CloudWatch. With thousands of users this causes memory exhaustion.  
