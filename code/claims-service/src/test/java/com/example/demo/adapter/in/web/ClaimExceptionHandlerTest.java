@@ -4,6 +4,8 @@ import com.example.demo.application.exceptions.UnauthorizedClaimAccessException;
 import com.example.demo.application.exceptions.UserNotFoundException;
 import com.example.demo.domain.claim.ClaimNotFoundException;
 import com.example.demo.domain.claim.InvalidClaimException;
+import com.example.demo.domain.claim.InvalidStatusTransitionException;
+import com.example.demo.user.domain.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -74,5 +76,31 @@ class ClaimExceptionHandlerTest {
         assertThat(detail.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
         assertThat(detail.getTitle()).isEqualTo("Forbidden");
         assertThat(detail.getType()).isEqualTo(URI.create("https://example.com/forbidden"));
+    }
+
+    // found this bug — trying to do CLOSED -> APPROVED was returning 500 not 422
+    // added the missing handler in ClaimExceptionHandler.java
+    @Test
+    void should_Return422_When_InvalidStatusTransition() {
+        var ex = new InvalidStatusTransitionException("Cannot transition from CLOSED to APPROVED");
+
+        ProblemDetail result = handler.handleInvalidStatusTransition(ex);
+
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        assertThat(result.getTitle()).isEqualTo("Invalid Status Transition");
+        assertThat(result.getDetail()).isEqualTo("Cannot transition from CLOSED to APPROVED");
+    }
+
+    // also found this — non-admin calling update status endpoint was 500 not 403
+    // UnauthorizedException (domain one) != UnauthorizedClaimAccessException, needs own handler
+    @Test
+    void should_Return403_When_NonAdminUpdatesClaimStatus() {
+        var ex = new UnauthorizedException("Only admin users can update claim status");
+
+        ProblemDetail result = handler.handleUnauthorized(ex);
+
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+        assertThat(result.getDetail()).isEqualTo("Only admin users can update claim status");
+        assertThat(result.getTitle()).isEqualTo("Forbidden");
     }
 }

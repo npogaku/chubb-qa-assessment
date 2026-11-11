@@ -4,6 +4,8 @@ import com.example.demo.application.exceptions.UnauthorizedClaimAccessException;
 import com.example.demo.application.exceptions.UserNotFoundException;
 import com.example.demo.domain.claim.ClaimNotFoundException;
 import com.example.demo.domain.claim.InvalidClaimException;
+import com.example.demo.domain.claim.InvalidStatusTransitionException;
+import com.example.demo.user.domain.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,5 +54,28 @@ public class ClaimExceptionHandler {
         problemDetail.setTitle("Forbidden");
         problemDetail.setType(errorTypes.forbidden());
         return problemDetail;
+    }
+
+    // was getting 500 when trying to move a claim to an invalid state e.g CLOSED -> APPROVED
+    // should return 422 not 500 — adding handler for this
+    @ExceptionHandler(InvalidStatusTransitionException.class)
+    public ProblemDetail handleInvalidStatusTransition(InvalidStatusTransitionException e) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        pd.setTitle("Invalid Status Transition");
+        pd.setType(errorTypes.validationError());
+        return pd;
+    }
+
+    // same issue — non admin user trying to update claim status was returning 500
+    // UnauthorizedException is a different class than UnauthorizedClaimAccessException
+    // need a separate handler for it
+    @ExceptionHandler(UnauthorizedException.class)
+    public ProblemDetail handleUnauthorized(UnauthorizedException e) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN, e.getMessage());
+        pd.setTitle("Forbidden");
+        pd.setType(errorTypes.forbidden());
+        return pd;
     }
 }
