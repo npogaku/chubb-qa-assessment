@@ -1,0 +1,28 @@
+{
+  "name": "PATCH /api/admin/claims/{claimId}/status",
+  "request": {
+    "urlPathPattern": "/api/admin/claims/[^/]+/status",
+    "method": "PATCH",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-admin-claims-claimid-status-patch-response.json"
+  },
+  "metadata": {
+    "operationId": "updateClaimStatus",
+    "summary": "Update the status of a claim",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

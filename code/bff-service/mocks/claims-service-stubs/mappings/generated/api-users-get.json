@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/users",
+  "request": {
+    "urlPathPattern": "/api/users",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-users-get-response.json"
+  },
+  "metadata": {
+    "operationId": "listAllUsers",
+    "summary": "List all users (Admin only)",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

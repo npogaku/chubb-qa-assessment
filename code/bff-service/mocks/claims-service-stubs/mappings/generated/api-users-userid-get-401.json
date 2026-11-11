@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/users/{userId} \u2192 401",
+  "scenarioName": "getUser-scenarios",
+  "requiredScenarioState": "error-401",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/users/[^/]+",
+    "method": "GET"
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-users-userid-get-401-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "getUser",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

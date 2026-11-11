@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Admin role required",
+  "instance": "/api/admin/dashboard/stats"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/dashboard/stats \u2192 401",
+  "scenarioName": "getDashboardStats-scenarios",
+  "requiredScenarioState": "error-401",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/admin/dashboard/stats",
+    "method": "GET"
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-admin-dashboard-stats-get-401-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "getDashboardStats",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

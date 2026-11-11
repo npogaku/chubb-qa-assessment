@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/claims \u2192 400",
+  "scenarioName": "submitClaim-scenarios",
+  "requiredScenarioState": "error-400",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/claims",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "bff/generated/api-claims-post-400-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "submitClaim",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

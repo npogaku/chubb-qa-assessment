@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/claims",
+  "request": {
+    "urlPathPattern": "/api/admin/claims",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-admin-claims-get-response.json"
+  },
+  "metadata": {
+    "operationId": "listAllClaims",
+    "summary": "List all claims (admin)",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

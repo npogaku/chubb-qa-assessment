@@ -1,0 +1,60 @@
+# Schemathesis Contract Testing Profile
+# Disables JWT authentication for property-based API testing (see SchemathesisSecurityConfiguration)
+# Used by: docker-compose.schemathesis.yml with SPRING_PROFILES_ACTIVE=schemathesis
+#
+# SECURITY WARNING: This profile disables authentication entirely.
+# It must NEVER be used in production or any deployed environment.
+
+# Provide dummy JWT URIs to prevent eager property resolution failures.
+# The primary JWT bypass is SchemathesisSecurityConfiguration which disables oauth2ResourceServer
+# entirely — Spring Boot will not attempt to contact these URIs at runtime.
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9999/realms/dummy
+          jwk-set-uri: http://localhost:9999/realms/dummy/protocol/openid-connect/certs
+  kafka:
+    bootstrap-servers: localhost:9092
+
+# Override claims service URL with compose service hostname
+claims-service:
+  url: ${CLAIMS_SERVICE_URL:http://wiremock:8080}
+
+# Disable Kafka consumer (no Kafka in schemathesis compose)
+kafka:
+  consumer:
+    auto-startup: false
+
+# Disable observability exports (no InfluxDB/Zipkin in schemathesis compose)
+management:
+  influx:
+    metrics:
+      export:
+        enabled: false
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 0.0
+
+# Dummy Keycloak config to prevent startup failures
+keycloak:
+  admin:
+    server-url: http://localhost:9999
+    realm: master
+    target-realm: demo-app
+    username: admin
+    password: admin
+    client-id: admin-cli
+  token:
+    url: http://localhost:9999/realms/demo-app/protocol/openid-connect/token
+    client-id: demo-app-ui
+  logout:
+    url: http://localhost:9999/realms/demo-app/protocol/openid-connect/logout
+  service-account:
+    token-url: http://localhost:9999/realms/demo-app/protocol/openid-connect/token
+    client-id: bff-service
+    client-secret: dummy-secret

@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/users",
+  "request": {
+    "urlPathPattern": "/api/users",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-users-post-response.json"
+  },
+  "metadata": {
+    "operationId": "createUser",
+    "summary": "Create a new user",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

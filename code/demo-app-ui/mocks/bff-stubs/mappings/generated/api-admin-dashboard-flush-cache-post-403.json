@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/admin/dashboard/flush-cache \u2192 403",
+  "scenarioName": "flushDashboardCache-scenarios",
+  "requiredScenarioState": "error-403",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/admin/dashboard/flush-cache",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "bff/generated/api-admin-dashboard-flush-cache-post-403-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "flushDashboardCache",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

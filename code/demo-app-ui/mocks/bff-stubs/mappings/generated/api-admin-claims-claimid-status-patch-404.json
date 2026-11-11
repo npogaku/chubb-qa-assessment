@@ -1,0 +1,28 @@
+{
+  "name": "PATCH /api/admin/claims/{claimId}/status \u2192 404",
+  "scenarioName": "updateClaimStatus-scenarios",
+  "requiredScenarioState": "error-404",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/admin/claims/[^/]+/status",
+    "method": "PATCH",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "bff/generated/api-admin-claims-claimid-status-patch-404-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "updateClaimStatus",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

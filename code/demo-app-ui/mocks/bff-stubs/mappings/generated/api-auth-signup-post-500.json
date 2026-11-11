@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/auth/signup \u2192 500",
+  "scenarioName": "signup-scenarios",
+  "requiredScenarioState": "error-500",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/auth/signup",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "bff/generated/api-auth-signup-post-500-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "signup",
+    "errorScenario": true,
+    "generated": "auto-generated - implicit 500 for all endpoints"
+  }
+}

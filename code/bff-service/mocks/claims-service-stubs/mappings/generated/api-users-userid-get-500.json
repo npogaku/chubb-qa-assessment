@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/users/{userId} \u2192 500",
+  "scenarioName": "getUser-scenarios",
+  "requiredScenarioState": "error-500",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/users/[^/]+",
+    "method": "GET"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-users-userid-get-500-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "getUser",
+    "errorScenario": true,
+    "generated": "auto-generated - implicit 500 for all endpoints"
+  }
+}

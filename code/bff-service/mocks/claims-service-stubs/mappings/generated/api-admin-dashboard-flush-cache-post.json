@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/admin/dashboard/flush-cache",
+  "request": {
+    "urlPathPattern": "/api/admin/dashboard/flush-cache",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-admin-dashboard-flush-cache-post-response.json"
+  },
+  "metadata": {
+    "operationId": "flushDashboardCache",
+    "summary": "Flush dashboard statistics cache",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

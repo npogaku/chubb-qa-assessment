@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/users",
+  "request": {
+    "urlPathPattern": "/api/admin/users",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-admin-users-get-response.json"
+  },
+  "metadata": {
+    "operationId": "listAllUsers",
+    "summary": "List all users (admin)",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

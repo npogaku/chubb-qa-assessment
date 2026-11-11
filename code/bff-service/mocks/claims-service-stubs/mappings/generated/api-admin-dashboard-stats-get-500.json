@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/dashboard/stats \u2192 500",
+  "scenarioName": "getDashboardStats-scenarios",
+  "requiredScenarioState": "error-500",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/admin/dashboard/stats",
+    "method": "GET"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-admin-dashboard-stats-get-500-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "getDashboardStats",
+    "errorScenario": true,
+    "generated": "auto-generated - implicit 500 for all endpoints"
+  }
+}

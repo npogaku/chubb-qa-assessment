@@ -1,0 +1,27 @@
+# Contract-test profile: lightweight validation stack pointing at WireMock
+# Activate with: --spring.profiles.active=contract-test
+# Used by docker-compose-validation.yml for contract testing (Schemathesis, Newman, Postman)
+
+claims-service:
+  url: ${CLAIMS_SERVICE_URL:http://wiremock:8080}
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+
+management:
+  influx:
+    metrics:
+      export:
+        enabled: false
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 0.0

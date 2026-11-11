@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/validation-error",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "Cannot transition from REJECTED to APPROVED",
+  "instance": "/api/claims/660e8400-e29b-41d4-a716-446655440001"
+}

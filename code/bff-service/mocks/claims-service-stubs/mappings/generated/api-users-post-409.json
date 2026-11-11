@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/users \u2192 409",
+  "scenarioName": "createUser-scenarios",
+  "requiredScenarioState": "error-409",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/users",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-users-post-409-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "createUser",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

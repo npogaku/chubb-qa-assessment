@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Access denied - requires ADMIN role",
+  "instance": "/api/users"
+}

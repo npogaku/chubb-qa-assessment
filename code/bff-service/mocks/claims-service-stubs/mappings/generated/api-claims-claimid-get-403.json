@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/claims/{claimId} \u2192 403",
+  "scenarioName": "getClaim-scenarios",
+  "requiredScenarioState": "error-403",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/claims/[^/]+",
+    "method": "GET"
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-claims-claimid-get-403-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "getClaim",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

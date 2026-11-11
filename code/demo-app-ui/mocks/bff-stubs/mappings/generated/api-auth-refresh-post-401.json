@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/auth/refresh \u2192 401",
+  "scenarioName": "refresh-scenarios",
+  "requiredScenarioState": "error-401",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/auth/refresh",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "bff/generated/api-auth-refresh-post-401-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "refresh",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

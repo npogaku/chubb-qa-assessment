@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/claims \u2192 403",
+  "scenarioName": "createClaim-scenarios",
+  "requiredScenarioState": "error-403",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/claims",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-claims-post-403-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "createClaim",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

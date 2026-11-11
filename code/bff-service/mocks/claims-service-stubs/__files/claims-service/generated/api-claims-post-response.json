@@ -1,0 +1,11 @@
+{
+  "claimId": "660e8400-e29b-41d4-a716-446655440001",
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
+  "incidentDate": "2026-02-15",
+  "incidentLocation": "123 Main St, Springfield, IL",
+  "description": "Water damage to basement due to pipe burst",
+  "claimAmount": 5000.0,
+  "status": "SUBMITTED",
+  "createdAt": "2026-02-17T10:30:00.000Z",
+  "updatedAt": "2026-02-17T10:30:00.000Z"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/auth/signup",
+  "request": {
+    "urlPathPattern": "/api/auth/signup",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-auth-signup-post-response.json"
+  },
+  "metadata": {
+    "operationId": "signup",
+    "summary": "Register a new user account",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

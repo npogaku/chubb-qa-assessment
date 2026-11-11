@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/auth/refresh",
+  "request": {
+    "urlPathPattern": "/api/auth/refresh",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-auth-refresh-post-response.json"
+  },
+  "metadata": {
+    "operationId": "refresh",
+    "summary": "Refresh authentication tokens",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

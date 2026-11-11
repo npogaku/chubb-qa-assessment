@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/unauthorized",
+  "title": "Unauthorized",
+  "status": 401,
+  "detail": "Not authenticated",
+  "instance": "/api/admin/claims/{claimId}/status"
+}

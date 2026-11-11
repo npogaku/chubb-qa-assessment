@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/dashboard/stats",
+  "request": {
+    "urlPathPattern": "/api/admin/dashboard/stats",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-admin-dashboard-stats-get-response.json"
+  },
+  "metadata": {
+    "operationId": "getDashboardStats",
+    "summary": "Get dashboard statistics",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

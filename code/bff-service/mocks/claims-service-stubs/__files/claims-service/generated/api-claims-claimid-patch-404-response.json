@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/not-found",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "Claim not found",
+  "instance": "/api/claims/{claimId}"
+}

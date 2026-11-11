@@ -1,0 +1,28 @@
+{
+  "name": "PATCH /api/claims/{claimId} \u2192 400",
+  "scenarioName": "updateClaim-scenarios",
+  "requiredScenarioState": "error-400",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/claims/[^/]+",
+    "method": "PATCH",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-claims-claimid-patch-400-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "updateClaim",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

@@ -1,0 +1,9 @@
+# WireMock profile: routes Claims Service calls to WireMock stub server
+# Activate with: --spring.profiles.active=wiremock
+# Or set environment variable: USE_WIREMOCK_CLAIMS=true
+#
+# When USE_WIREMOCK_CLAIMS=true, this profile is auto-activated via
+# spring.profiles.include in application.yml (see group config below).
+
+claims-service:
+  url: ${CLAIMS_SERVICE_URL:http://localhost:8081}

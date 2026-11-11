@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/claims \u2192 401",
+  "scenarioName": "listAllClaims-scenarios",
+  "requiredScenarioState": "error-401",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/admin/claims",
+    "method": "GET"
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "claims-service/generated/api-admin-claims-get-401-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "listAllClaims",
+    "errorScenario": true,
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

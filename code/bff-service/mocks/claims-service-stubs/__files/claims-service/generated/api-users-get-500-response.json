@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/internal-server-error",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "An unexpected error occurred. Please try again later.",
+  "instance": "/api/users"
+}

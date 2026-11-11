@@ -1,0 +1,28 @@
+{
+  "name": "PATCH /api/claims/{claimId}",
+  "request": {
+    "urlPathPattern": "/api/claims/[^/]+",
+    "method": "PATCH",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-claims-claimid-patch-response.json"
+  },
+  "metadata": {
+    "operationId": "updateClaim",
+    "summary": "Update a claim",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

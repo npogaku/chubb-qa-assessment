@@ -1,0 +1,13 @@
+{
+  "totalUsers": 50,
+  "totalClaims": 142,
+  "claimsByStatus": {
+    "SUBMITTED": 45,
+    "UNDER_REVIEW": 32,
+    "APPROVED": 50,
+    "REJECTED": 15,
+    "CLOSED": 0
+  },
+  "cacheHit": true,
+  "queryTimeMs": 12
+}

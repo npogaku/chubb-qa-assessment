@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/admin/users \u2192 500",
+  "scenarioName": "listAllUsers-scenarios",
+  "requiredScenarioState": "error-500",
+  "newScenarioState": "Started",
+  "request": {
+    "urlPathPattern": "/api/admin/users",
+    "method": "GET"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "bff/generated/api-admin-users-get-500-response.json",
+    "fixedDelayMilliseconds": 100
+  },
+  "metadata": {
+    "operationId": "listAllUsers",
+    "errorScenario": true,
+    "generated": "auto-generated - implicit 500 for all endpoints"
+  }
+}

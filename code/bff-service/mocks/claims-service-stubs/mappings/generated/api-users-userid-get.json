@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/users/{userId}",
+  "request": {
+    "urlPathPattern": "/api/users/[^/]+",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-users-userid-get-response.json"
+  },
+  "metadata": {
+    "operationId": "getUser",
+    "summary": "Get user details",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

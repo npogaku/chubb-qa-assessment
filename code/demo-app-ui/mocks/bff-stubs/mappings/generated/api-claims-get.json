@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/claims",
+  "request": {
+    "urlPathPattern": "/api/claims",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-claims-get-response.json"
+  },
+  "metadata": {
+    "operationId": "listClaims",
+    "summary": "List the authenticated user's claims",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

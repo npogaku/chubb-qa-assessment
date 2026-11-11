@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/claims",
+  "request": {
+    "urlPathPattern": "/api/claims",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "claims-service/generated/api-claims-post-response.json"
+  },
+  "metadata": {
+    "operationId": "createClaim",
+    "summary": "Create a new insurance claim",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

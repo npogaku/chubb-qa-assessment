@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/duplicate-entity",
+  "title": "Conflict",
+  "status": 409,
+  "detail": "A user with this email already exists",
+  "instance": "/api/auth/signup"
+}

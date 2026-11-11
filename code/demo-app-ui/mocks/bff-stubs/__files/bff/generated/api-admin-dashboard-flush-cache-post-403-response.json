@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Insufficient permissions (admin role required)",
+  "instance": "/api/admin/dashboard/flush-cache"
+}

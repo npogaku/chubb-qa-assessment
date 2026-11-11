@@ -1,0 +1,28 @@
+{
+  "name": "POST /api/auth/login",
+  "request": {
+    "urlPathPattern": "/api/auth/login",
+    "method": "POST",
+    "headers": {
+      "Content-Type": {
+        "matches": "application/json.*"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "fixedDelayMilliseconds": 200,
+    "bodyFileName": "bff/generated/api-auth-login-post-response.json"
+  },
+  "metadata": {
+    "operationId": "login",
+    "summary": "Authenticate a user",
+    "generated": "auto-generated from OpenAPI spec"
+  }
+}

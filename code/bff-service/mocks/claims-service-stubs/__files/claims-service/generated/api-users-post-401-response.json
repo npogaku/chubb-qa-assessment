@@ -1,0 +1,7 @@
+{
+  "type": "https://api.demo-app.com/errors/unauthorized",
+  "title": "Unauthorized",
+  "status": 401,
+  "detail": "Bearer token is missing or invalid",
+  "instance": "/api/users"
+}
