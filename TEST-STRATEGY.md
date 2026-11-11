@@ -118,12 +118,38 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 
 ---
 
-### 🟠 BUG-009 — No minimum date validation allows year 1111
+### 🟠 BUG-009 — No minimum date validation allows any past date (year 1, year 1111, etc.)
 **File:** `Claim.java` + `wizard-step-1.tsx`  
-**Symptom:** Observed live during manual testing — incident date "Nov 11, 1111" was accepted.  
-**Root cause:** Domain validation only blocks future dates: `if (incidentDate.isAfter(LocalDate.now()))`. There is no lower bound.  
-**Impact:** In a real insurance system, dates outside the policy coverage window should be rejected. A claim from 900 years ago is semantically invalid.  
-**Test added:** `claim-submission.spec.ts → BUG-009: wizard accepts year 1111 as incident date` (documents the behaviour).
+**Symptom:** Observed live during manual testing:
+- Entered "Nov 11, 1111" → accepted ✅ (no error)
+- Entered "01/01/0001" (January 1, Year 1 AD) → accepted ✅ (no error)
+- Review screen shows "January 1, 1" — broken display for year < 1000
+
+**Root cause:** Domain validation only blocks future dates: `if (incidentDate.isAfter(LocalDate.now()))`. There is no lower bound whatsoever — any past date is valid.  
+**Impact:** In a real insurance system, claims can only be submitted within the coverage period. A date from year 1 or year 1111 is semantically invalid and should be rejected with a meaningful error. The broken display ("January 1, 1") is a secondary UI issue.  
+**Test added:** `claim-submission.spec.ts → BUG-009: wizard accepts year 1111 as incident date` (documents the behaviour).  
+**Fix required:** Add minimum date guard in `Claim.java` constructor, e.g. policy-driven or at minimum `incidentDate.getYear() > 1900`.
+
+---
+
+### 🟠 BUG-012 — Claim amount field accepts leading zeros ($000000000000000.1)
+**File:** `wizard-step-1.tsx`  
+**How found:** Manual testing — entered "000000000000000.1" in the claim amount field.  
+**Symptom:** The amount input accepted a string of 15 leading zeros followed by `.1`. The final stored amount is correct (`$0.10`) but the input displayed `$ 000000000000000.1` which looks broken and confusing to users.  
+**Root cause:** No input sanitisation or formatting on the amount field. The HTML `<input type="number">` or the custom amount input does not strip leading zeros or format the value on blur.  
+**Impact:** UX defect — the amount is mathematically valid but the display looks broken. A production system should format currency inputs properly (e.g. `$0.10` not `$000000000000000.1`).  
+**Not fixed:** UI input formatting change.
+
+---
+
+### 🟠 BUG-013 — Dashboard stats not refreshed after new claims are submitted
+**File:** `DashboardController.java` / `DashboardStatsCache.java`  
+**How found:** Manual testing — submitted 2 claims, then visited Admin Dashboard.  
+**Symptom:** Admin Dashboard showed "Total Claims: 0" even though 2 claims existed in the system. The stats were stale/cached.  
+**Root cause:** The dashboard uses Redis cache (`DashboardStatsCache`). The cache is only invalidated via the "Flush Cache & Reload" button — it is not automatically invalidated when new claims are created or status changes. The TTL-based expiry is the only automatic mechanism.  
+**Impact:** Admins see incorrect statistics until the cache expires or they manually flush it. This is a data freshness issue on a business-critical dashboard.  
+**Workaround:** Click "Load from Cache" / "Flush Cache & Reload" on the dashboard.  
+**Not fixed:** Requires cache invalidation on claim create/update events.
 
 ---
 
