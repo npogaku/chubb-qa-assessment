@@ -5,7 +5,6 @@ import com.example.demo.domain.claim.Claim;
 import com.example.demo.domain.claim.ClaimRepository;
 import com.example.demo.domain.claim.ClaimStatus;
 import com.example.demo.domain.claim.events.ClaimSubmitted;
-import com.example.demo.domain.claim.events.ClaimSubmitted;
 import com.example.demo.fixtures.ClaimTestBuilder;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserId;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
