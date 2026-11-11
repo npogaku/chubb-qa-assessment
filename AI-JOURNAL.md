@@ -122,6 +122,8 @@
 | Risk ranking | ✅ | Mostly | Reordered by business impact |
 | BUG-001/002 (exception handlers) | ✅ | Yes | Changed 400→422 for transition; changed error title |
 | BUG-003 (sessionStorage bug) | Missed | — | I found it; AI confirmed |
+| BUG-009 (year 1111 date) | Missed | — | I found it during manual testing; AI confirmed |
+| BUG-011 (dialog misalignment) | Missed | — | I spotted it visually during live testing; AI confirmed |
 | Kafka test rewrite | ✅ | Yes | Changed from "mock everything" to "spy + real mapper" |
 | Frontend localStorage fix | ✅ | Yes | Added sessionStorage stub too |
 | E2E structure | ✅ | Mostly | Split into 3 files; added BUG-009 documented test |

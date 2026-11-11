@@ -134,6 +134,40 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 
 ---
 
+### 🟠 BUG-011 — Confirmation dialog not centered on viewport (UI defect)
+**File:** `confirmation-dialog.tsx` (admin claims page)  
+**How found:** Manual exploratory testing — clicked "Update Status → Rejected" on the admin claims page during live application testing.  
+**Symptom:** The "Confirm Status Change" modal appears anchored to the middle of the table section rather than centered on the full viewport. On pages with limited content (e.g. only 1 claim in the list) the dialog renders in the lower half of the screen, misaligned from the page centre.  
+**Root cause:** The dialog likely uses `position: absolute` relative to its parent container instead of `position: fixed` relative to the viewport. A proper modal overlay should use:
+```css
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 50;
+```
+**Impact:** UI/UX defect — not a functional bug, the dialog still works correctly. But poor positioning looks unprofessional and could confuse users on smaller screens. A senior engineer would flag this in a PR review.  
+**Not fixed:** Frontend styling change only. Low priority relative to functional bugs above.
+
+---
+
+### 🟠 BUG-011 — Confirmation dialog not centered on viewport
+**File:** `confirmation-dialog.tsx` (admin claims page)  
+**How found:** Manual exploratory testing — clicked "Update Status → Rejected" on the admin claims page.  
+**Symptom:** The "Confirm Status Change" modal dialog appears anchored to the middle of the table section rather than centered on the full viewport. On pages with limited content (e.g. only 1 claim in the list) the dialog renders in the lower half of the screen, misaligned from the page centre.  
+**Root cause:** The dialog likely uses `position: absolute` relative to its parent container instead of `position: fixed` relative to the viewport. A proper modal overlay should use:
+```css
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 50;
+```
+**Impact:** UI/UX defect — not a functional bug, the dialog still works. But it looks unprofessional and could be missed by users on smaller screens. A senior engineer would flag this in a PR review.  
+**Not fixed:** Frontend styling change. Low priority relative to functional bugs.
+
+---
+
 ## 4. What I Chose to Test
 
 ### ✅ Tested
