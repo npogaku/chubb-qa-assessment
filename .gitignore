@@ -1,0 +1,29 @@
+# Build outputs
+**/target/
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+
+# Generated API client (must run npm run generate:api before tests)
+code/demo-app-ui/src/lib/api/generated/
+
+# Playwright
+code/demo-app-ui/playwright-report/
+code/demo-app-ui/test-results/
+code/demo-app-ui/tests/e2e/.auth/*.json
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Java
+*.class
+*.jar
+*.war
+
+# Logs
+*.log
+npm-debug.log*
