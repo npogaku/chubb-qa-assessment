@@ -5,6 +5,7 @@ import com.example.demo.domain.claim.Claim;
 import com.example.demo.domain.claim.ClaimRepository;
 import com.example.demo.domain.claim.ClaimStatus;
 import com.example.demo.domain.claim.events.ClaimSubmitted;
+import com.example.demo.domain.claim.events.ClaimSubmitted;
 import com.example.demo.fixtures.ClaimTestBuilder;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserId;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
@@ -43,6 +45,10 @@ class CreateClaimUseCaseTest {
 
     @Mock
     private Counter mockCounter;
+
+    // needed this mock — was getting NPE in the use case without it
+    @Mock
+    private ApplicationEventPublisher evtPublisher;
 
     @InjectMocks
     private CreateClaimUseCase useCase;
@@ -108,11 +114,11 @@ class CreateClaimUseCaseTest {
                 .withClaimAmount(new BigDecimal("2000.00"))
                 .toCommand();
 
-        Claim result = useCase.execute(command);
+        useCase.execute(command);
 
-        assertThat(result.getDomainEvents()).isNotEmpty();
-        assertThat(result.getDomainEvents())
-                .anyMatch(event -> event.getClass().getSimpleName().equals("ClaimSubmitted"));
+        // when CDC is disabled (default in tests), events are published then cleared
+        // getDomainEvents() is empty after that so check the publisher was called instead
+        verify(evtPublisher).publishEvent(any(ClaimSubmitted.class));
     }
 
     @Test
