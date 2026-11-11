@@ -134,10 +134,18 @@ Risk is assessed on two axes: **damage if defective** × **complexity / integrat
 
 ---
 
-### 🟠 BUG-011 — Confirmation dialog not centered on viewport (UI defect)
+### 🟠 BUG-011 — Confirmation dialog not centered on viewport (UI defect — reproducible on every status change)
 **File:** `confirmation-dialog.tsx` (admin claims page)  
-**How found:** Manual exploratory testing — clicked "Update Status → Rejected" on the admin claims page during live application testing.  
-**Symptom:** The "Confirm Status Change" modal appears anchored to the middle of the table section rather than centered on the full viewport. On pages with limited content (e.g. only 1 claim in the list) the dialog renders in the lower half of the screen, misaligned from the page centre.  
+**How found:** Manual exploratory testing on the admin claims page.  
+**Steps to reproduce:**
+1. Login as `admin@demo.com`
+2. Go to Claims Management
+3. Click "Update Status" dropdown on any claim → select any status (e.g. Rejected)
+4. Confirm dialog appears — misaligned
+5. After confirming, select the next status (e.g. Closed)
+6. Same misaligned dialog appears again
+
+**Symptom:** The "Confirm Status Change" modal appears on every status transition, and on every occurrence it is anchored to the middle of the table section rather than centered on the full viewport. Consistent, reproducible, not a fluke.  
 **Root cause:** The dialog likely uses `position: absolute` relative to its parent container instead of `position: fixed` relative to the viewport. A proper modal overlay should use:
 ```css
 position: fixed;
@@ -146,7 +154,7 @@ left: 50%;
 transform: translate(-50%, -50%);
 z-index: 50;
 ```
-**Impact:** UI/UX defect — not a functional bug, the dialog still works correctly. But poor positioning looks unprofessional and could confuse users on smaller screens. A senior engineer would flag this in a PR review.  
+**Impact:** Affects every admin status update workflow — this is a core admin action. Every time an admin changes a claim status, they see a mispositioned dialog. While functional, it looks unprofessional in a production system handling real insurance claims.  
 **Not fixed:** Frontend styling change only. Low priority relative to functional bugs above.
 
 ---
